@@ -4,9 +4,11 @@ repositories {
 
 apply plugin: "java"
 apply plugin: "eclipse"
+apply plugin: "maven"
 
 dependencies {
     compile "io.netty:netty-all:5.0.0.Alpha2"
     compile "com.google.guava:guava:18.0"
 }
+
 
