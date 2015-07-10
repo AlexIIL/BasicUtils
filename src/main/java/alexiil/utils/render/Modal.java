@@ -8,23 +8,21 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
-import alexiil.utils.render.list.RenderArea;
-import alexiil.utils.render.list.RenderCallList;
-import alexiil.utils.render.list.RenderLine;
-import alexiil.utils.render.list.RenderPart;
-import alexiil.utils.render.list.RenderText;
+
+import alexiil.utils.render.glcompat.IRenderCallList;
+import alexiil.utils.render.glcompat.SwingTools;
 
 public abstract class Modal {
     public static final double root3 = Math.sqrt(3);
     public static final Random rand = new Random();
-    
+
     public static Color applyRandomAddition(int range, Color colour, int toAdd) {
         int r = applyRandomAddition(range, colour.getRed(), toAdd);
         int g = applyRandomAddition(range, colour.getGreen(), toAdd);
         int b = applyRandomAddition(range, colour.getBlue(), toAdd);
         return new Color(r, g, b);
     }
-    
+
     public static int applyRandomAddition(int range, int cPart, int toAdd) {
         int subtraction = 0;
         if (cPart - range - toAdd < 0)
@@ -34,25 +32,26 @@ public abstract class Modal {
         int addition = rand.nextInt(range * 2) - range - toAdd - subtraction;
         return cPart + addition;
     }
-    
+
     private Point2D.Double min = new Point2D.Double(), max = new Point2D.Double();
     private Map<ERenderType, BufferedImage> imageMap = new EnumMap<ERenderType, BufferedImage>(ERenderType.class);
     private double radius = -1;
+    /** Used to check if it needs to be recompiled to opengl or not */
     protected boolean isDirty = true;
-    protected RenderCallList renderList = new RenderCallList();
+    protected IRenderCallList renderList = SwingTools.instance.makeNewCallList();
     private Color lastColor = null;
-    
+
     public BufferedImage getImage(ERenderType type) {
         return imageMap.getOrDefault(type, null);
     }
-    
+
     public double getRadius() {
         if (radius >= 0)
             return radius;
         radius = reCalculateRadius();
         return radius;
     }
-    
+
     public double reCalculateRadius() {
         if (isDirty) {
             double x = max.getX() - min.getX();
@@ -61,22 +60,28 @@ public abstract class Modal {
         }
         return radius;
     }
-    
+
     protected void addBox(double x1, double y1, double x2, double y2) {
         addBox(x1, y1, x2, y2, Colour.GREEN.colour);
     }
-    
+
     protected void addBox(double x1, double y1, double x2, double y2, Color colour) {
         addLine(x1, y1, x1, y2, colour);
         addLine(x1, y2, x2, y2, colour);
         addLine(x2, y1, x2, y2, colour);
         addLine(x1, y1, x2, y1, colour);
     }
-    
-    /** @param xC The centre xPos of this hexagon
-     * @param yC The centre yPos of this hexagon
-     * @param r The radius of this hexagon
-     * @param colour The colour of this hexagon */
+
+    /**
+     * @param xC
+     *            The centre xPos of this hexagon
+     * @param yC
+     *            The centre yPos of this hexagon
+     * @param r
+     *            The radius of this hexagon
+     * @param colour
+     *            The colour of this hexagon
+     */
     protected void addHex(double xC, double yC, double r, Color colour) {
         double a = r / 2;
         double b = root3 * a;
@@ -89,19 +94,18 @@ public abstract class Modal {
         points[5] = new Point.Double(xC - b, yC + a);
         addLines(points, colour);
     }
-    
+
     protected void addFilledHex(double x, double y, double r, Color c) {
         if (!c.equals(lastColor)) {
-            renderList.addCall(new RenderStateColour(c));
+            renderList.colour(c);
             lastColor = c;
         }
         double a = r / 2;
         double b = root3 * a;
-        double[] xs = new double[] { x, x + b, x + b, x, x - b, x - b };
-        double[] ys = new double[] { y + r, y + a, y - a, y - r, y - a, y + a };
-        renderList.addCall(new RenderArea(xs, ys, 6));
+        double[][] points = new double[][] { { x, y + r }, { x + b, y + a }, { x + b, y - a }, { x, y - r }, { x - b, y - a }, { x - b, y + a } };
+        renderList.polygon(points);
     }
-    
+
     protected void addLines(Point2D.Double[] points, Color color) {
         for (int i = 0; i < points.length; i++) {
             Point2D.Double first = points[i];
@@ -113,55 +117,51 @@ public abstract class Modal {
             addLine(first.x, first.y, second.x, second.y, color);
         }
     }
-    
+
     protected void addLine(double x1, double y1, double x2, double y2) {
         addLine(new Line(x1, y1, x2, y2));
     }
-    
+
     protected void addLine(double x1, double y1, double x2, double y2, Color colour) {
         addLine(new Line(x1, y1, x2, y2, colour));
     }
-    
+
     protected void addLine(Line newLine) {
         if (!newLine.colour.equals(lastColor)) {
             lastColor = newLine.colour;
-            renderList.addCall(new RenderStateColour(lastColor));
+            renderList.colour(lastColor);
         }
-        renderList.addCall(new RenderLine(newLine));
+        renderList.line(newLine.toPoints());
         isDirty = true;
-        
+
         double minX = Math.min(min.getX(), Math.min(newLine.x1, newLine.x2));
         double minY = Math.min(min.getY(), Math.min(newLine.y1, newLine.y2));
         min = new Point2D.Double(minX, minY);
-        
+
         double maxX = Math.max(max.getX(), Math.max(newLine.x1, newLine.x2));
         double maxY = Math.max(max.getY(), Math.max(newLine.y1, newLine.y2));
         max = new Point2D.Double(maxX, maxY);
     }
-    
-    protected void addText(double cX, double cY, String text) {
-        renderList.addCall(new RenderText(text, cX, cY));
+
+    protected void addText(double cX, double cY, String text, int size) {
+        renderList.text(text, cX, cY, size);
     }
-    
-    protected void addRender(RenderPart render) {
-        renderList.addCall(render);
-    }
-    
+
     protected void addMultipleLines(ArrayList<Line> newLines) {
         for (Line newLine : newLines) {
             addLine(newLine);
         }
     }
-    
+
     protected void setImage(ERenderType renderType, BufferedImage image) {
         imageMap.put(renderType, image);
     }
-    
-    public RenderCallList getRenders() {
+
+    public IRenderCallList getRenders() {
         return renderList;
     }
-    
-    public void addRenders(RenderCallList list) {
-        list.addCall(getRenders());
+
+    public void addRenders(IRenderCallList list) {
+        list.list(getRenders());
     }
 }
