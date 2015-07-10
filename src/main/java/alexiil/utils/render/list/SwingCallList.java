@@ -97,4 +97,7 @@ public class SwingCallList extends RenderPart implements IRenderCallList {
             lst.add(((RenderStateChange) lst.get(pops.pop())).invert());
         }
     }
+
+    @Override
+    public void dispose() {/* NO-OP */}
 }
