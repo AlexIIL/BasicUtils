@@ -12,4 +12,7 @@ public interface IWindow<RCL extends IRenderCallList> {
      * {@link #renderCallList(IRenderCallList)} method
      */
     public void setRenderer(Runnable renderer);
+
+    /** Set this window to the main window- when this window is closed, the application will exit. */
+    public void makeMain();
 }

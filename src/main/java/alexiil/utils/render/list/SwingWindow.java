@@ -70,4 +70,9 @@ public class SwingWindow implements IWindow<SwingCallList> {
     public void renderCallList(SwingCallList list) {
         list.render(graphics);
     }
+
+    @Override
+    public void makeMain() {
+
+    }
 }
