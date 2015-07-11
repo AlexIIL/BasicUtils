@@ -1,7 +1,7 @@
 package alexiil.utils.render.glcompat;
 
 public interface IWindow<RCL extends IRenderCallList> {
-    public void open(int width, int height);
+    public void open(int width, int height, String title);
 
     public void close();
 

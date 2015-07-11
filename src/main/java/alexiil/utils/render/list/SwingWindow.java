@@ -18,10 +18,11 @@ public class SwingWindow implements IWindow<SwingCallList> {
     private volatile boolean open = false;
 
     @Override
-    public void open(int width, int height) {
+    public void open(int width, int height, String title) {
         EventQueue.invokeLater(() -> {
             frame = new JFrame();
             frame.setSize(width, height);
+            frame.setTitle(title);
 
             outer = new JPanel(new BorderLayout());
             frame.setContentPane(outer);
