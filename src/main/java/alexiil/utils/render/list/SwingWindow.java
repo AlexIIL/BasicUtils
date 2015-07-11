@@ -30,12 +30,12 @@ public class SwingWindow implements IWindow<SwingCallList> {
             inner = new JPanel();
             outer.add(inner, BorderLayout.CENTER);
 
+            frame.setVisible(true);
+
             Graphics g = inner.getGraphics();
             graphics = (Graphics2D) g.create();
 
             open = true;
-
-            frame.setVisible(true);
 
             new Thread(() -> {
                 while (open) {
