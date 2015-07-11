@@ -18,11 +18,10 @@ public class SwingWindow implements IWindow<SwingCallList> {
     private volatile boolean open = false;
 
     @Override
-    public void open(int xPos, int yPos, int xSize, int ySize) {
+    public void open(int width, int height) {
         EventQueue.invokeLater(() -> {
             frame = new JFrame();
-            frame.setBounds(xPos, yPos, xSize, ySize);
-            frame.setVisible(true);
+            frame.setSize(width, height);
 
             outer = new JPanel(new BorderLayout());
             frame.setContentPane(outer);
@@ -34,6 +33,8 @@ public class SwingWindow implements IWindow<SwingCallList> {
             graphics = (Graphics2D) g.create();
 
             open = true;
+
+            frame.setVisible(true);
 
             new Thread(() -> {
                 while (open) {
