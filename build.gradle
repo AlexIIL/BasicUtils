@@ -14,3 +14,12 @@ dependencies {
     compile "io.netty:netty-all:5.0.0.Alpha2"
     compile "com.google.guava:guava:18.0"
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
