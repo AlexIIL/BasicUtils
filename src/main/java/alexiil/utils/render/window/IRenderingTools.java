@@ -2,7 +2,7 @@ package alexiil.utils.render.window;
 
 public interface IRenderingTools {
 
-    IWindow<? extends IRenderCallList> makeNewWindow();
+    IWindow makeNewWindow();
 
     IRenderCallList makeNewCallList();
 }

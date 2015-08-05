@@ -13,7 +13,7 @@ import javax.swing.WindowConstants;
 
 import alexiil.utils.render.list.SwingCallList;
 
-public class SwingWindow implements IWindow<SwingCallList> {
+public class SwingWindow implements IWindow {
     private JFrame frame;
     private JPanel outer, inner;
     private Graphics2D graphics;
@@ -76,8 +76,13 @@ public class SwingWindow implements IWindow<SwingCallList> {
     }
 
     @Override
-    public void renderCallList(SwingCallList list) {
-        list.render(graphics);
+    public void renderCallList(IRenderCallList list) {
+        ((SwingCallList) list).render(graphics);
+    }
+
+    @Override
+    public SwingCallList makeCallList() {
+        return new SwingCallList();
     }
 
     @Override
