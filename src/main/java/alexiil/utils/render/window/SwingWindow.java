@@ -1,4 +1,4 @@
-package alexiil.utils.render.glcompat;
+package alexiil.utils.render.window;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -58,7 +58,7 @@ public class SwingWindow implements IWindow<SwingCallList> {
                             catch (InterruptedException e) {}
                     }
                     frame.dispose();
-                }, "Swing-Renderer").start();
+                } , "Swing-Renderer").start();
             });
         }
         catch (HeadlessException | InvocationTargetException | InterruptedException e) {
@@ -83,5 +83,15 @@ public class SwingWindow implements IWindow<SwingCallList> {
     @Override
     public void makeMain() {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    @Override
+    public void setSize(int width, int height) {
+        frame.setSize(width, height);
+    }
+
+    @Override
+    public void setFullscreen(boolean fullscreen) {
+        // FIXME!
     }
 }

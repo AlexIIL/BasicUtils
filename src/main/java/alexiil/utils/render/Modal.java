@@ -9,8 +9,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
 
-import alexiil.utils.render.glcompat.IRenderCallList;
-import alexiil.utils.render.glcompat.SwingTools;
+import alexiil.utils.render.window.IRenderCallList;
+import alexiil.utils.render.window.SwingTools;
 
 public abstract class Modal {
     public static final double root3 = Math.sqrt(3);

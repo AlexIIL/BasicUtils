@@ -1,4 +1,4 @@
-package alexiil.utils.render.glcompat;
+package alexiil.utils.render.window;
 
 import java.awt.Color;
 

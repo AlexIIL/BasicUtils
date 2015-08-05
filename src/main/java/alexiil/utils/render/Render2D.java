@@ -2,7 +2,7 @@ package alexiil.utils.render;
 
 import java.util.ArrayList;
 
-import alexiil.utils.render.glcompat.IRenderCallList;
+import alexiil.utils.render.window.IRenderCallList;
 
 public class Render2D {
     public static void add(IRenderCallList list, IRenderable render) {

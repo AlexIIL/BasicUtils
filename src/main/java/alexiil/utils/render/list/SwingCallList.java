@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import alexiil.utils.render.glcompat.IRenderCallList;
+import alexiil.utils.render.window.IRenderCallList;
 
 public class SwingCallList extends RenderPart implements IRenderCallList {
     List<RenderPart> lst = new ArrayList<RenderPart>();
