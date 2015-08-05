@@ -13,6 +13,11 @@ public class SwingCallList extends RenderPart implements IRenderCallList {
     List<RenderPart> lst = new ArrayList<RenderPart>();
     private RenderState state = new RenderState();
     private Deque<Deque<Integer>> statePops = new ArrayDeque<Deque<Integer>>();
+    private final Graphics2D graphics;
+
+    public SwingCallList(Graphics2D g2d) {
+        graphics = g2d;
+    }
 
     public void render(Graphics2D g2d) {
         render(state, g2d);
@@ -44,8 +49,13 @@ public class SwingCallList extends RenderPart implements IRenderCallList {
     }
 
     @Override
-    public int[] text(String text, double x, double y, int size) {
-        return null;
+    public int[] text(String text, double x, double y, int size, boolean centerX, boolean centerY) {
+        pushState();
+        scale(size);
+        RenderText render = new RenderText(text, x / (double) size, y / (double) size, centerX, centerY);
+        addCall(render);
+        popState();
+        return render.getSize(graphics, size);
     }
 
     @Override

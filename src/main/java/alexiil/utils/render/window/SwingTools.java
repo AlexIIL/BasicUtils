@@ -12,7 +12,7 @@ public class SwingTools implements IRenderingTools {
     }
 
     @Override
-    public SwingCallList makeNewCallList() {
-        return new SwingCallList();
+    public IRenderCallList makeNewCallList() {
+        return new SwingCallList(null);
     }
 }

@@ -54,14 +54,12 @@ public class SwingWindow implements IWindow {
                         if (diff < 17)
                             try {
                                 Thread.sleep(17 - diff);
-                            }
-                            catch (InterruptedException e) {}
+                            } catch (InterruptedException e) {}
                     }
                     frame.dispose();
                 } , "Swing-Renderer").start();
             });
-        }
-        catch (HeadlessException | InvocationTargetException | InterruptedException e) {
+        } catch (HeadlessException | InvocationTargetException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -82,7 +80,7 @@ public class SwingWindow implements IWindow {
 
     @Override
     public SwingCallList makeCallList() {
-        return new SwingCallList();
+        return new SwingCallList(graphics);
     }
 
     @Override

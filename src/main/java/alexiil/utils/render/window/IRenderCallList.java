@@ -8,11 +8,15 @@ public interface IRenderCallList {
 
     void line(double[][] points);
 
-    /**
-     * Returns the size the rendered text will be, in the same units that you gave (so, it will ALWAYS be an array of
-     * size 2 [1,2] for example)
-     */
-    int[] text(String text, double x, double y, int size);
+    /** Returns the size the rendered text will be, in the same units that you gave (so, it will ALWAYS be an array of
+     * size 2 [1,2] for example). Always starts rendering from the */
+    default int[] text(String text, double x, double y, int size) {
+        return text(text, x, y, size, false, false);
+    }
+
+    /** Returns the size the rendered text will be, in the same units that you gave (so, it will ALWAYS be an array of
+     * size 2 [1,2] for example). */
+    int[] text(String text, double x, double y, int size, boolean centerX, boolean centerY);
 
     void colour(Color c);
 
