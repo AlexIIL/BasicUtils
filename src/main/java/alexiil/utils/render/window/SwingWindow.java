@@ -1,6 +1,7 @@
 package alexiil.utils.render.window;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -28,6 +29,7 @@ public class SwingWindow implements IWindow {
                 frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 frame.setSize(width, height);
                 frame.setTitle(title);
+                frame.setBackground(Color.BLACK);
 
                 outer = new JPanel(new BorderLayout());
                 frame.setContentPane(outer);
