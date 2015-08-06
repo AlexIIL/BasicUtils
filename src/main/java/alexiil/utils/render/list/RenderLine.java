@@ -13,7 +13,7 @@ public class RenderLine extends RenderPart {
         this.x1 = x1;
         this.y1 = y1;
     }
-
+    
     public RenderLine(Line line) {
         this((double) line.x1, (double) line.y1, (double) line.x2, (double) line.y2);
     }

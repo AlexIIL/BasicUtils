@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import alexiil.utils.render.RenderStateColour;
 import alexiil.utils.render.window.IRenderCallList;
 
 public class SwingCallList extends RenderPart implements IRenderCallList {
@@ -40,12 +41,15 @@ public class SwingCallList extends RenderPart implements IRenderCallList {
 
     @Override
     public void polygon(double[][] points) {
-        addCall(new RenderArea(points));
+        addCall(new RenderArea(points, true));
     }
 
     @Override
     public void line(double[][] points) {
-        // addCall(new RenderLine(points));
+        for (int i = 1; i < points.length; i++) {
+            addCall(new RenderLine(points[i - 1][0], points[i - 1][1], points[i][0], points[i][1]));
+        }
+        addCall(new RenderLine(points[0][0], points[0][1], points[points.length - 1][0], points[points.length - 1][1]));
     }
 
     @Override
@@ -60,7 +64,7 @@ public class SwingCallList extends RenderPart implements IRenderCallList {
 
     @Override
     public void colour(Color c) {
-
+        addCall(new RenderStateColour(c));
     }
 
     @Override
