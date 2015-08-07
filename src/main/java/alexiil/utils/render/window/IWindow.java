@@ -2,9 +2,10 @@ package alexiil.utils.render.window;
 
 import java.util.function.Consumer;
 
-import alexiil.utils.input.EnumPressableMotion;
 import alexiil.utils.input.AKeyEvent;
-import alexiil.utils.input.AMouseEvent;
+import alexiil.utils.input.EnumKeyStateChanged;
+import alexiil.utils.input.EnumMouseEvent;
+import alexiil.utils.input.IMouseEvent;
 
 public interface IWindow {
 
@@ -12,6 +13,8 @@ public interface IWindow {
 
     void close();
 
+    /** Generally, this won't work properly unless you call this from inside of the renderer set by
+     * {@link #setRenderer(Runnable)}. */
     void renderCallList(IRenderCallList list);
 
     IRenderCallList makeCallList();
@@ -32,9 +35,9 @@ public interface IWindow {
 
     void addKeyCallback(Consumer<AKeyEvent> keyEventListener);
 
-    default void addKeyCallback(Consumer<AKeyEvent> keyEventListener, EnumPressableMotion... types) {
+    default void addKeyCallback(Consumer<AKeyEvent> keyEventListener, EnumKeyStateChanged... types) {
         addKeyCallback((event) -> {
-            for (EnumPressableMotion motion : types) {
+            for (EnumKeyStateChanged motion : types) {
                 if (event.getMotionType() == motion) {
                     keyEventListener.accept(event);
                     return;
@@ -43,13 +46,13 @@ public interface IWindow {
         });
     }
 
-    void addMouseCallback(Consumer<AMouseEvent> mouseEventListener);
+    void addMouseCallback(Consumer<IMouseEvent> mouseEventListener);
 
-    default void addMouseCallback(Consumer<AMouseEvent> keyEventListener, EnumPressableMotion... types) {
+    default void addMouseCallback(Consumer<IMouseEvent> mouseEventListener, EnumMouseEvent... types) {
         addMouseCallback((event) -> {
-            for (EnumPressableMotion motion : types) {
-                if (event.getMotionType() == motion) {
-                    keyEventListener.accept(event);
+            for (EnumMouseEvent type : types) {
+                if (event.getType() == type) {
+                    mouseEventListener.accept(event);
                     return;
                 }
             }

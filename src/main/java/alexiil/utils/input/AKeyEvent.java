@@ -5,10 +5,10 @@ import java.awt.event.KeyEvent;
 public class AKeyEvent implements IPressableEvent {
     private final int keyCode;
     private final char keyChar;
-    private final EnumPressableMotion motion;
+    private final EnumKeyStateChanged motion;
     private final EnumKeyModifier[] modifiers;
 
-    public AKeyEvent(int keyCode, char keyChar, EnumPressableMotion motion, EnumKeyModifier... modifiers) {
+    public AKeyEvent(int keyCode, char keyChar, EnumKeyStateChanged motion, EnumKeyModifier... modifiers) {
         this.keyCode = keyCode;
         this.keyChar = keyChar;
         this.motion = motion;
@@ -16,7 +16,7 @@ public class AKeyEvent implements IPressableEvent {
     }
 
     public AKeyEvent(KeyEvent event) {
-        this(event.getKeyCode(), event.getKeyChar(), EnumPressableMotion.valueOf(event), EnumKeyModifier.valueOf(event));
+        this(event.getKeyCode(), event.getKeyChar(), EnumKeyStateChanged.valueOf(event), EnumKeyModifier.valueOf(event));
     }
 
     public int getKey() {
@@ -32,7 +32,7 @@ public class AKeyEvent implements IPressableEvent {
     }
 
     @Override
-    public EnumPressableMotion getMotionType() {
+    public EnumKeyStateChanged getMotionType() {
         return motion;
     }
 }

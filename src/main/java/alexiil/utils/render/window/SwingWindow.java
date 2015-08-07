@@ -6,12 +6,12 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.LayoutManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +22,38 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import alexiil.utils.input.AKeyEvent;
-import alexiil.utils.input.AMouseEvent;
+import alexiil.utils.input.IMouseEvent;
+import alexiil.utils.input.MouseContext;
+import alexiil.utils.input.MouseMovedEvent;
+import alexiil.utils.input.MouseStateChangeEvent;
 import alexiil.utils.render.list.SwingCallList;
 
-public class SwingWindow implements IWindow, KeyListener, MouseListener {
+public class SwingWindow implements IWindow, KeyListener, MouseListener, MouseMotionListener {
+    @SuppressWarnings("serial")
+    private class PanelRender extends JPanel {
+        private PanelRender(LayoutManager layout) {
+            super(layout);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            graphics = (Graphics2D) g;
+            if (render != null) {
+                render.run();
+            }
+            graphics = null;
+        }
+    }
+
     private JFrame frame;
     private JPanel outer, inner;
     private Graphics2D graphics;
     private Runnable render;
     private volatile boolean open = false;
     private final List<Consumer<AKeyEvent>> keyListeners = new ArrayList<>();
-    private final List<Consumer<AMouseEvent>> mouseListeners = new ArrayList<>();
+    private final List<Consumer<IMouseEvent>> mouseListeners = new ArrayList<>();
+    public MouseContext currentContext = new MouseContext();
 
     @Override
     public void open(int width, int height, String title) {
@@ -48,34 +69,26 @@ public class SwingWindow implements IWindow, KeyListener, MouseListener {
                 outer.setBackground(Color.BLACK);
                 frame.setContentPane(outer);
 
-                inner = new JPanel(new BorderLayout());
+                inner = new PanelRender(new BorderLayout());
                 inner.setBackground(Color.BLACK);
                 outer.add(inner, BorderLayout.CENTER);
 
+                inner.addKeyListener(this);
+                inner.addMouseListener(this);
+                inner.addMouseMotionListener(this);
+
                 frame.setVisible(true);
 
-                Graphics g = inner.getGraphics();
-                graphics = (Graphics2D) g.create();
-
                 open = true;
-
-                frame.addComponentListener(new ComponentAdapter() {
-                    @Override
-                    public void componentResized(ComponentEvent e) {
-                        graphics = (Graphics2D) inner.getGraphics().create();
-                    }
-                });
-
-                frame.addKeyListener(this);
-                frame.addMouseListener(this);
 
                 new Thread(() -> {
                     while (open) {
                         long before = System.currentTimeMillis();
 
-                        if (render != null) {
-                            render.run();
-                        }
+                        inner.repaint();
+                        // if (render != null) {
+                        // render.run();
+                        // }
 
                         long diff = System.currentTimeMillis() - before;
                         if (diff < 17)
@@ -136,7 +149,7 @@ public class SwingWindow implements IWindow, KeyListener, MouseListener {
     }
 
     @Override
-    public void addMouseCallback(Consumer<AMouseEvent> mouseEventListener) {
+    public void addMouseCallback(Consumer<IMouseEvent> mouseEventListener) {
         mouseListeners.add(mouseEventListener);
     }
 
@@ -164,17 +177,17 @@ public class SwingWindow implements IWindow, KeyListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        mouseSomething(e, false);
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        mouseSomething(e, false);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        mouseSomething(e, false);
     }
 
     @Override
@@ -182,4 +195,29 @@ public class SwingWindow implements IWindow, KeyListener, MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mouseSomething(e, true);
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        mouseSomething(e, true);
+    }
+
+    private void mouseSomething(MouseEvent e, boolean move) {
+        IMouseEvent event;
+        if (move) {
+            event = new MouseMovedEvent(currentContext, e);
+        } else {
+            event = new MouseStateChangeEvent(e);
+        }
+        event = currentContext.changeFor(event);
+        for (Consumer<IMouseEvent> consumer : mouseListeners) {
+            consumer.accept(event);
+        }
+
+        System.out.println(event.toString());
+    }
 }

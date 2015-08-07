@@ -2,15 +2,15 @@ package alexiil.utils.input;
 
 import java.awt.event.KeyEvent;
 
-public enum EnumPressableMotion {
+public enum EnumKeyStateChanged {
     PRESSED,
     RELEASED,
     TYPED;
 
-    public static final EnumPressableMotion[] MINOR_CHANGE = { PRESSED, RELEASED };
-    public static final EnumPressableMotion[] ALL = values();
+    public static final EnumKeyStateChanged[] MINOR_CHANGE = { PRESSED, RELEASED };
+    public static final EnumKeyStateChanged[] ALL = values();
 
-    public static EnumPressableMotion valueOf(KeyEvent event) {
+    public static EnumKeyStateChanged valueOf(KeyEvent event) {
         int id = event.getID();
         if (id == KeyEvent.KEY_PRESSED) {
             return PRESSED;

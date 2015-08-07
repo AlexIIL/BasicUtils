@@ -1,6 +1,6 @@
 package alexiil.utils.input;
 
-import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +11,9 @@ public enum EnumKeyModifier {
     META,
     SHIFT;
 
-    public static EnumKeyModifier[] valueOf(KeyEvent event) {
+    public static final EnumKeyModifier[] NONE = {};
+
+    public static EnumKeyModifier[] valueOf(InputEvent event) {
         List<EnumKeyModifier> modifiers = new ArrayList<>();
         if (event.isAltDown()) {
             modifiers.add(ALT);
